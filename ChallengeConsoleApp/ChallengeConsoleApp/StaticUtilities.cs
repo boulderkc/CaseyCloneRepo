@@ -22,6 +22,32 @@ namespace ChallengeConsoleApp
             }
         }
 
+        public static void RunTwoThreadsWithDelay(List<int> intList)
+        {
+            // Create an array of Thread references.
+            Thread[] array = new Thread[2];
+            // New each thread with ParameterizedThreadStart. This will allow us to call the Start with an object (a struct, in this case), which we'll use to pass 
+            // our list of integers and our delay.
+            ParameterizedThreadStart start = new ParameterizedThreadStart(StaticUtilities.WriteThreadDelegate);
+            // Thread 1
+            array[0] = new Thread(start);
+            array[0].Name = "First Thread";
+            StaticUtilities.ListOfIntsAndDelayStruct firstThreadValues = new StaticUtilities.ListOfIntsAndDelayStruct(intList, StaticUtilities.GetThreadDelay1Setting());
+            array[0].Start(firstThreadValues);
+
+            // Thread 2
+            array[1] = new Thread(start);
+            array[1].Name = "Second Thread";
+            StaticUtilities.ListOfIntsAndDelayStruct secondThreadValues = new StaticUtilities.ListOfIntsAndDelayStruct(intList, StaticUtilities.GetThreadDelay2Setting());
+            array[1].Start(secondThreadValues);
+
+            while (array[0].IsAlive || array[1].IsAlive)
+            {
+                // do nothing. We're waiting until both threads are done.
+            }
+
+        }
+
         public static int GetThreadDelay1Setting()
         {
             var reader = new AppSettingsReader();
@@ -52,17 +78,17 @@ namespace ChallengeConsoleApp
             }
         }
 
-        public static void Write1(object info)
+        public static void WriteThreadDelegate(object info)
         {
             // This receives the value passed into the Thread.Start method.
-            ListOfIntsAndDelayStruct x = (ListOfIntsAndDelayStruct)info;
+            ListOfIntsAndDelayStruct intsAndDelay = (ListOfIntsAndDelayStruct)info;
 
-            List<int> intList = new List<int>(x.listOfInts);
-            int sleepValue = x.delayMilliseconds;
+            List<int> intList = new List<int>(intsAndDelay.listOfInts);
+            int sleepValue = intsAndDelay.delayMilliseconds;
             foreach (var item in intList)
             {
                 Thread.Sleep(sleepValue);
-                Console.WriteLine(item);
+                Console.WriteLine($"{Thread.CurrentThread.Name}, value: {item}");
             }
 
         }
