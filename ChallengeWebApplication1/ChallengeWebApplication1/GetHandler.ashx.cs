@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 
 namespace ChallengeWebApplication1
@@ -15,8 +13,19 @@ namespace ChallengeWebApplication1
 
         public void ProcessRequest(HttpContext context)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.Write(DateTime.Now.ToLongTimeString());
+
+            // To force a 500 status, use a query like this: http://localhost:58523/GetHandler.ashx/?force500=true
+            string force500 = context.Request.QueryString["force500"];
+            if (force500 == "true")
+            {
+                context.Response.StatusDescription = "This is a forced 500 status based on the query string.";
+                context.Response.StatusCode = 500; 
+            }
+            else
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.Write(DateTime.Now.ToLongTimeString());
+            }
 
         }
 
