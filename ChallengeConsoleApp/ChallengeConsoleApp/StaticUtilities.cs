@@ -31,13 +31,13 @@ namespace ChallengeConsoleApp
             ParameterizedThreadStart start = new ParameterizedThreadStart(StaticUtilities.WriteThreadDelegate);
             // Thread 1
             array[0] = new Thread(start);
-            array[0].Name = "First Thread";
+            array[0].Name = "T1";
             StaticUtilities.ListOfIntsAndDelayStruct firstThreadValues = new StaticUtilities.ListOfIntsAndDelayStruct(intList, StaticUtilities.GetThreadDelay1Setting());
             array[0].Start(firstThreadValues);
 
             // Thread 2
             array[1] = new Thread(start);
-            array[1].Name = "Second Thread";
+            array[1].Name = "T2";
             StaticUtilities.ListOfIntsAndDelayStruct secondThreadValues = new StaticUtilities.ListOfIntsAndDelayStruct(intList, StaticUtilities.GetThreadDelay2Setting());
             array[1].Start(secondThreadValues);
 
@@ -58,7 +58,7 @@ namespace ChallengeConsoleApp
             }
             catch (InvalidOperationException e)
             {
-                Console.WriteLine("Configurable setting Thread1Delay is missing from the application configuration (app.config) file. Default of 1000 will be used.");
+                Console.WriteLine("Configurable setting Thread1Delay is missing from the application configuration (app.config in the project, or ChallengeConsoleApp.exe.config in the binaries folder) file. Default of 1000 will be used.");
                 return 1000;
             }
         }
@@ -73,8 +73,23 @@ namespace ChallengeConsoleApp
             }
             catch (InvalidOperationException e)
             {
-                Console.WriteLine("Configurable setting Thread2Delay is missing from the application configuration (app.config) file. Default of 500 will be used.");
+                Console.WriteLine("Configurable setting Thread2Delay is missing from the application configuration (app.config in the project, or ChallengeConsoleApp.exe.config in the binaries folder) file. Default of 500 will be used.");
                 return 500; 
+            }
+        }
+
+        public static string GetLocalhostBaseAddressSetting()
+        {
+            var reader = new AppSettingsReader();
+            try
+            {
+                var baseURL = reader.GetValue("localhostbaseURL", typeof(string));
+                return baseURL.ToString();
+            }
+            catch (InvalidOperationException e)
+            {
+                Console.WriteLine("Configurable setting localhostbaseURL is missing from the application configuration (app.config in the project, or ChallengeConsoleApp.exe.config in the binaries folder) file. Please enter a localhost string with port, for example http://localhost:58523");
+                return "";
             }
         }
 
@@ -88,7 +103,7 @@ namespace ChallengeConsoleApp
             foreach (var item in intList)
             {
                 Thread.Sleep(sleepValue);
-                Console.WriteLine($"{Thread.CurrentThread.Name}, value: {item}");
+                Console.WriteLine($"{Thread.CurrentThread.Name}: {item}");
             }
 
         }
