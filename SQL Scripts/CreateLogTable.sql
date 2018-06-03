@@ -12,7 +12,7 @@
 use ae_code_challange
 
 CREATE TABLE server_response_log (
-	pk int IDENTITY (1,1) NOT NULL,    
+	pk int IDENTITY (1,1) NOT NULL,    -- seed 1, increment 1
     StartTimeUTC datetime not null,
 	EndTimeUTC datetime not null,
     HTTPStatusCode int null,
